@@ -10,8 +10,8 @@ class Noda:
         self.right = None
         
         
-    def _html_node_row_(self):
-        return f"<hd>{self.key}</hd><td>{self.left}</td><td>{self.right}</td>"
+    # def _html_node_row_(self):
+    #     return f"<hd>{self.key}</hd><td>{self.left}</td><td>{self.right}</td>"
     
     def povezi(self, stars):
         if self.key < stars.key:
@@ -26,14 +26,16 @@ class GresniKozel:
         self.size = 0
         self.maxSize = 0
         
-        self.stack = []
+        self.stack = [] # Tu za izobraževalne namene
         
     def najdi(self, key, prikazi):
         def _pom(root):
             if root == None:
                 return False
+            
             self.stack.append(root)
-            if prikazi: self.prikazi(root)
+            if prikazi: self.prikazi(root) 
+            
             if key == root.key:
                 if prikazi: self.prikazi(root, False)
                 return root
@@ -41,13 +43,87 @@ class GresniKozel:
                 return _pom(root.left)
             else:
                 return _pom(root.right)
+            
         return _pom(self.root)
+    
+    
+    def vstavi(self, key, prikaz =  False):
+        self._vrini(key, prikaz)
+        koza = self._gresni_kozel(prikaz)
+        koza = self._uravnovesi(koza)
+        if koza != None:
+            stars = self._get_from_stack()
+            if stars == None:
+                self.root == koza
+            else:
+                koza.povezi(stars)
         
-    def vrini(self, key, prikazi=False):
+        self._clear_stack()
+        if prikaz:
+            self.prikazi()
+            
+    def odstrani(self, key, prikazi):
+        self._clear_stack()
+        noda = self.najdi(key, prikazi)
+        if noda == False:
+            return False
+        
+        stars = self._get_from_stack()
+        
+        def _ekstrem_od(noda, desnanje):
+                if desnanje: stranski_otrok = noda.left
+                else: stranski_otrok = noda.right
+            
+                if stranski_otrok == None:
+                    if prikazi: self.prikazi(noda, False)
+                    return noda
+                self.stack.append(noda)
+                if prikazi: self.prikazi(noda)
+                return _ekstrem_od(stranski_otrok, desnanje)
+            
+
+        def _odstranjevanje(noda, stars):
+            if noda == None:
+                return
+            
+            if noda.left == None and noda.right == None:
+                if stars == None:
+                    self.root = noda
+                if noda.key < stars.key: stars.left = None
+                else: stars.right = None
+            
+            self._clear_stack()
+            if noda.right != None:
+                ekstrem = _ekstrem_od(noda.right, True)
+            elif noda.left != None:
+                ekstrem =_ekstrem_od(noda.left, False)
+            else:
+                noda = None
+                return
+                
+            noda.key = ekstrem.key
+            stars_ekstrema = self._get_from_stack()
+            _odstranjevanje(ekstrem, stars_ekstrema)
+        
+         
+        _odstranjevanje(noda, stars)
+        
+        
+#####################################################################################
+# IZOBRAŽEVALNE STVARI
+#####################################################################################
+
+    def _get_from_stack(self):
+        if self.stack == []:
+            return None
+        return self.stack.pop()
+    
+    def _clear_stack(self):
+        self.stack = []
+        
+    def _vrini(self, key, prikazi=False):
         
         noda = Noda(key)
-        # noda.left = None
-        # noda.right = None
         
         if prikazi: self.naslov("Iskanje starša", 2)
         
@@ -81,14 +157,14 @@ class GresniKozel:
         if prikazi: self.prikazi()
     
     
-    def velikost_poddrevesa(self, node):
+    def _velikost_poddrevesa(self, node):
         if node == None:
             return 0
-        return 1 + self.velikost_poddrevesa(node.left) + self.velikost_poddrevesa(node.right)
+        return 1 + self._velikost_poddrevesa(node.left) + self._velikost_poddrevesa(node.right)
 
 
-    def je_uravnovesena_noda(self, noda, prikazi = False):
-        if abs(self.velikost_poddrevesa(noda.left) - self.velikost_poddrevesa(noda.right)) <= 1:
+    def _je_uravnovesena_noda(self, noda, prikazi = False):
+        if abs(self._velikost_poddrevesa(noda.left) - self._velikost_poddrevesa(noda.right)) <= 1:
             if prikazi: self.prikazi(noda, False)
             return True
         if prikazi: self.prikazi(noda, True)
@@ -96,19 +172,19 @@ class GresniKozel:
     
             
     
-    def gresni_kozel(self,  prikazi=False):
+    def _gresni_kozel(self,  prikazi=False):
         if prikazi: self.naslov("Najdi grešnega kozla", 2)
-        if self.stack == []:
-            return None
-        noda = self.stack.pop()
-        while self.je_uravnovesena_noda(noda, prikazi) == True and self.stack != []:
+        noda = self._get_from_stack()
+        if noda == None:
+            return
+        while self._je_uravnovesena_noda(noda, prikazi) == True and self.stack != []:
             if noda == self.root:
                 return None
-            noda = self.stack.pop() # Gre do starša
+            noda = self._get_from_stack # Gre do starša (ni none)
         return noda
 
     
-    def uravnovesi(self, root):
+    def _uravnovesi(self, root):
         def flatten(node, nodes):
             if node == None:
                 return
@@ -132,143 +208,11 @@ class GresniKozel:
 
 
 
+
+#####################################################################################
+# PRIKAZOVANLE STVARI
+#####################################################################################
     
-    def vstavi(self, key, prikaz =  False):
-        self.vrini(key, prikaz)
-        koza = self.gresni_kozel(prikaz)
-        koza = self.uravnovesi(koza)
-        if koza != None:
-            if self.stack != []:
-                stars = self.stack.pop()
-                koza.povezi(stars)
-            else:
-                self.root = koza
-        self.stack = []
-        if prikaz:
-            self.prikazi()
-            
-    def odstrani(self, key, prikazi):
-        self.stack = []
-        noda = self.najdi(key, prikazi)
-        if noda == False:
-            return False
-        
-        stars = None
-        if self.stack != []:
-            stars = self.stack.pop()
-        
-        def _ekstrem_od(noda, desnanje):
-                if desnanje: stranski_otrok = noda.left
-                else: stranski_otrok = noda.right
-            
-                if stranski_otrok == None:
-                    if prikazi: self.prikazi(noda, False)
-                    return noda
-                self.stack.append(noda)
-                if prikazi: self.prikazi(noda)
-                return _ekstrem_od(stranski_otrok, desnanje)
-            
-
-        def _odstranjevanje(noda, stars):
-            if noda == None:
-                return
-            
-            if noda.left == None and noda.right == None:
-                if stars == None:
-                    self.root = noda
-                if noda.key < stars.key: stars.left = None
-                else: stars.right = None
-            
-            self.stack = []
-            if noda.right != None:
-                ekstrem = _ekstrem_od(noda.right, True)
-            elif noda.left != None:
-                ekstrem =_ekstrem_od(noda.left, False)
-            else:
-                noda = None
-                return
-                
-            noda.key = ekstrem.key
-            if self.stack == []:
-                stars_ekstrema = None
-            else:
-                stars_ekstrema =self.stack.pop()
-            _odstranjevanje(ekstrem, stars_ekstrema)
-        
-         
-        _odstranjevanje(noda, stars)
-        
-            
-               
-        
-        # stars = None
-        # if self.stack != []:
-        #     stars = self.stack.pop()
-        # def _zamakni(stars, nov_otrok):
-                
-        #     if nov_otrok.left == None:
-        #         zamenjava = noda.right
-        #     else:
-        #         zamenjava = noda.left
-            
-        #     if stars == None:
-        #         self.root == zamenjava
-        
-        
-        # def _odstrani_bst(node, key):
-        #     if node is None:
-        #         return None, False
-
-        #     if key < node.key:
-        #         node.left, removed = _odstrani_bst(node.left, key)
-        #         return node, removed
-
-        #     if key > node.key:
-        #         node.right, removed = _odstrani_bst(node.right, key)
-        #         return node, removed
-
-        #     # Noda z enim otrokom ali brez otrok.
-        #     if node.left is None:
-        #         return node.right, True
-        #     if node.right is None:
-        #         return node.left, True
-
-        #     # Noda z dvema otrokoma: nadomesti jo naslednik (min v desnem poddrevesu).
-        #     naslednik_stars = node
-        #     naslednik = node.right
-        #     while naslednik.left is not None:
-        #         naslednik_stars = naslednik
-        #         naslednik = naslednik.left
-
-        #     node.key = naslednik.key
-        #     if naslednik_stars == node:
-        #         naslednik_stars.right = naslednik.right
-        #     else:
-        #         naslednik_stars.left = naslednik.right
-        #     return node, True
-
-        # self.root, removed = _odstrani_bst(self.root, key)
-        # if not removed:
-        #     return False
-
-        # self.size -= 1
-        # if self.size == 0:
-        #     self.root = None
-        #     self.maxSize = 0
-        #     return True
-
-        # # Scapegoat pravilo po brisanju: če je drevo preveč skrčeno glede na maxSize,
-        # # uravnovesi celotno drevo in posodobi maxSize.
-        # if self.size < self.maxSize / 2:
-        #     self.root = self.uravnovesi(self.root)
-        #     self.maxSize = self.size
-
-        # return True
-    
-    
-    
-    
-
     def prikazi(self, node=None, scape=None):
         def prikazi_stack():
             css = """
