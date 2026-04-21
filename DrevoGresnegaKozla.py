@@ -52,13 +52,20 @@ class GresniKozel:
         koza = self._gresni_kozel(prikaz)
         koza = self._uravnovesi(koza)
         if koza != None:
-            stars = self._get_from_stack()
-            if stars == None:
-                self.root == koza
-            else:
+            if self.stack != []:
+                stars = self.stack.pop()
                 koza.povezi(stars)
+            else:
+                self.root = koza
+        self.stack = []
+        # if koza != None:
+        #     stars = self._get_from_stack()
+        #     if stars == None:
+        #         self.root == koza
+        #     else:
+        #         koza.povezi(stars)
         
-        self._clear_stack()
+        # self._clear_stack()
         if prikaz:
             self.prikazi()
             
@@ -107,6 +114,8 @@ class GresniKozel:
         
          
         _odstranjevanje(noda, stars)
+        
+        if prikazi: self.prikazi()
         
         
 #####################################################################################
@@ -180,7 +189,7 @@ class GresniKozel:
         while self._je_uravnovesena_noda(noda, prikazi) == True and self.stack != []:
             if noda == self.root:
                 return None
-            noda = self._get_from_stack # Gre do starša (ni none)
+            noda = self.stack.pop() # Gre do starša
         return noda
 
     
