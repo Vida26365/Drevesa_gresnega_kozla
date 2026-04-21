@@ -28,6 +28,21 @@ class GresniKozel:
         
         self.stack = []
         
+    def najdi(self, key, prikazi):
+        def _pom(root):
+            if root == None:
+                return False
+            self.stack.append(root)
+            if prikazi: self.prikazi(root)
+            if key == root.key:
+                if prikazi: self.prikazi(root, False)
+                return root
+            if key < root.key:
+                return _pom(root.left)
+            else:
+                return _pom(root.right)
+        return _pom(self.root)
+        
     def vrini(self, key, prikazi=False):
         
         noda = Noda(key)
@@ -61,6 +76,7 @@ class GresniKozel:
             noda.povezi(stars)
         
         self.size += 1
+        self.maxSize = max(self.maxSize, self.size)
         
         if prikazi: self.prikazi()
     
@@ -130,8 +146,124 @@ class GresniKozel:
         self.stack = []
         if prikaz:
             self.prikazi()
+            
+    def odstrani(self, key, prikazi):
+        self.stack = []
+        noda = self.najdi(key, prikazi)
+        if noda == False:
+            return False
         
-          
+        stars = None
+        if self.stack != []:
+            stars = self.stack.pop()
+        
+        def _ekstrem_od(noda, desnanje):
+                if desnanje: stranski_otrok = noda.left
+                else: stranski_otrok = noda.right
+            
+                if stranski_otrok == None:
+                    if prikazi: self.prikazi(noda, False)
+                    return noda
+                self.stack.append(noda)
+                if prikazi: self.prikazi(noda)
+                return _ekstrem_od(stranski_otrok, desnanje)
+            
+
+        def _odstranjevanje(noda, stars):
+            if noda == None:
+                return
+            
+            if noda.left == None and noda.right == None:
+                if stars == None:
+                    self.root = noda
+                if noda.key < stars.key: stars.left = None
+                else: stars.right = None
+            
+            self.stack = []
+            if noda.right != None:
+                ekstrem = _ekstrem_od(noda.right, True)
+            elif noda.left != None:
+                ekstrem =_ekstrem_od(noda.left, False)
+            else:
+                noda = None
+                return
+                
+            noda.key = ekstrem.key
+            if self.stack == []:
+                stars_ekstrema = None
+            else:
+                stars_ekstrema =self.stack.pop()
+            _odstranjevanje(ekstrem, stars_ekstrema)
+        
+         
+        _odstranjevanje(noda, stars)
+        
+            
+               
+        
+        # stars = None
+        # if self.stack != []:
+        #     stars = self.stack.pop()
+        # def _zamakni(stars, nov_otrok):
+                
+        #     if nov_otrok.left == None:
+        #         zamenjava = noda.right
+        #     else:
+        #         zamenjava = noda.left
+            
+        #     if stars == None:
+        #         self.root == zamenjava
+        
+        
+        # def _odstrani_bst(node, key):
+        #     if node is None:
+        #         return None, False
+
+        #     if key < node.key:
+        #         node.left, removed = _odstrani_bst(node.left, key)
+        #         return node, removed
+
+        #     if key > node.key:
+        #         node.right, removed = _odstrani_bst(node.right, key)
+        #         return node, removed
+
+        #     # Noda z enim otrokom ali brez otrok.
+        #     if node.left is None:
+        #         return node.right, True
+        #     if node.right is None:
+        #         return node.left, True
+
+        #     # Noda z dvema otrokoma: nadomesti jo naslednik (min v desnem poddrevesu).
+        #     naslednik_stars = node
+        #     naslednik = node.right
+        #     while naslednik.left is not None:
+        #         naslednik_stars = naslednik
+        #         naslednik = naslednik.left
+
+        #     node.key = naslednik.key
+        #     if naslednik_stars == node:
+        #         naslednik_stars.right = naslednik.right
+        #     else:
+        #         naslednik_stars.left = naslednik.right
+        #     return node, True
+
+        # self.root, removed = _odstrani_bst(self.root, key)
+        # if not removed:
+        #     return False
+
+        # self.size -= 1
+        # if self.size == 0:
+        #     self.root = None
+        #     self.maxSize = 0
+        #     return True
+
+        # # Scapegoat pravilo po brisanju: če je drevo preveč skrčeno glede na maxSize,
+        # # uravnovesi celotno drevo in posodobi maxSize.
+        # if self.size < self.maxSize / 2:
+        #     self.root = self.uravnovesi(self.root)
+        #     self.maxSize = self.size
+
+        # return True
     
     
     
