@@ -48,6 +48,7 @@ class GresniKozel:
     
     
     def vstavi(self, key, prikaz =  False):
+        self.stack = []
         self._vrini(key, prikaz)
         koza = self._gresni_kozel(prikaz)
         koza = self._uravnovesi(koza)
@@ -132,7 +133,7 @@ class GresniKozel:
         self.stack = []
         
     def _vrini(self, key, prikazi=False):
-        
+        self.stack = []
         noda = Noda(key)
         
         if prikazi: self.naslov("Iskanje starša", 2)
@@ -173,12 +174,27 @@ class GresniKozel:
         return 1 + self._velikost_poddrevesa(node.left) + self._velikost_poddrevesa(node.right)
 
 
-    def _je_uravnovesena_noda(self, noda, prikazi = False):
-        if abs(self._velikost_poddrevesa(noda.left) - self._velikost_poddrevesa(noda.right)) <= 1:
-            if prikazi: self.prikazi(noda, False)
+    def _je_uravnovesena_noda(self, node, prikazi=False):
+        if node is None:
             return True
-        if prikazi: self.prikazi(noda, True)
-        return False
+
+        left = self.velikost_poddrevesa(node.left)
+        right = self.velikost_poddrevesa(node.right)
+        total = left + right + 1
+
+        balanced = (left <= self.alfa * total) and (right <= self.alfa * total)
+
+        if prikazi:
+            self.prikazi(node, not balanced)
+
+        return balanced
+    
+    #def _je_uravnovesena_noda(self, noda, prikazi = False):
+    #    if abs(self._velikost_poddrevesa(noda.left) - self._velikost_poddrevesa(noda.right)) <= 1:
+    #        if prikazi: self.prikazi(noda, False)
+    #        return True
+    #    if prikazi: self.prikazi(noda, True)
+    #    return False
     
             
     
