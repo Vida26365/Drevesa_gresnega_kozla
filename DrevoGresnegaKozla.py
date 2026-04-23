@@ -204,7 +204,7 @@ class GresniKozel:
         def drevo_from_sorted_list(nodes, start, end):
             if start > end:
                 return None
-            mid = int(math.ceil(start + (end - start) / 2.0))
+            mid = int((start + end) // 2)
             # node = Node(nodes[mid].key)
             noda = nodes[mid]
             noda.left = drevo_from_sorted_list(nodes, start, mid-1)
