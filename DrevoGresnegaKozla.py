@@ -75,6 +75,7 @@ class GresniKozel:
         if noda == False:
             return False
         
+        _ = self._get_from_stack() # Odstranimo samega sebe
         stars = self._get_from_stack()
         
         def _ekstrem_od(noda, desnanje):
