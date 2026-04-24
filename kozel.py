@@ -194,41 +194,41 @@ class GresniKozel:
         display("\n".join(lines))
 
 
-def main():
-    drevo = GresniKozel()
-    for i in range(0, 100, 10):
-        drevo.insert(i)
-        drevo.draw()
-        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+#def main():
+    #drevo = GresniKozel()
+    #for i in range(0, 100, 10):
+    #    drevo.insert(i)
+    #    drevo.draw()
+    #    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+#
+#
+    #drevo.insert(42)
+    #drevo.draw()
+    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+#
+    #drevo.remove(42)
+    #drevo.draw()
+    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+#
+    #drevo.remove(20)
+    #drevo.draw()
+    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+#
+    #drevo.remove(10)
+    #drevo.draw()
+    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+#
+    #drevo.remove(0)
+    #drevo.draw()
+    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+#
+    #drevo.remove(50)
+    #drevo.draw()
+    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+#
+    #drevo.remove(30)
+    #drevo.draw()
+    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
 
 
-    drevo.insert(42)
-    drevo.draw()
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-    drevo.remove(42)
-    drevo.draw()
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-    drevo.remove(20)
-    drevo.draw()
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-    drevo.remove(10)
-    drevo.draw()
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-    drevo.remove(0)
-    drevo.draw()
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-    drevo.remove(50)
-    drevo.draw()
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-    drevo.remove(30)
-    drevo.draw()
-    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-
-
-main()
+#main()
