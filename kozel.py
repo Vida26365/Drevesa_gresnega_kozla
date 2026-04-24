@@ -1,4 +1,4 @@
-from IPython.display import display
+from IPython.display import HTML,display
 import math
 
 class Node:
@@ -158,6 +158,10 @@ class GresniKozel:
             u.right = None
         return drevo_from_sorted_list(nodes, 0, len(nodes)-1)
 
+#---------------------------------------------------------------------------
+#                      RISNAJE
+#---------------------------------------------------------------------------
+
     def draw(self):
         def _display(node):
             if node is None:
@@ -193,6 +197,84 @@ class GresniKozel:
         lines, *_ = _display(self.root)
         display("\n".join(lines))
 
+
+    def draw_html(self):
+        if self.root is None:
+            display(HTML("<b>Empty tree</b>"))
+            return
+    
+        # --- assign positions (inorder x, depth y) ---
+        positions = {}
+        edges = []
+        x_counter = 0
+    
+        def dfs(node, depth):
+            nonlocal x_counter
+            if node is None:
+                return
+    
+            dfs(node.left, depth + 1)
+    
+            x = x_counter
+            y = depth
+            positions[node] = (x, y)
+            x_counter += 1
+    
+            if node.left:
+                edges.append((node, node.left))
+            if node.right:
+                edges.append((node, node.right))
+    
+            dfs(node.right, depth + 1)
+    
+        dfs(self.root, 0)
+    
+        # --- scale for display ---
+        scale_x = 50
+        scale_y = 80
+        radius = 15
+    
+        # compute svg size
+        max_x = max(p[0] for p in positions.values())
+        max_y = max(p[1] for p in positions.values())
+    
+        width = (max_x + 1) * scale_x + 50
+        height = (max_y + 1) * scale_y + 50
+    
+        # --- build SVG ---
+        svg = []
+    
+        # edges
+        for parent, child in edges:
+            x1, y1 = positions[parent]
+            x2, y2 = positions[child]
+    
+            svg.append(f"""
+            <line x1="{x1*scale_x+25}" y1="{y1*scale_y+25}"
+                  x2="{x2*scale_x+25}" y2="{y2*scale_y+25}"
+                  stroke="black" />
+            """)
+    
+        # nodes
+        for node, (x, y) in positions.items():
+            cx = x * scale_x + 25
+            cy = y * scale_y + 25
+    
+            svg.append(f"""
+            <circle cx="{cx}" cy="{cy}" r="{radius}"
+                    fill="#4CAF50" stroke="black"/>
+            <text x="{cx}" y="{cy+5}"
+                  font-size="12" text-anchor="middle"
+                  fill="white">{node.val}</text>
+            """)
+    
+        html = f"""
+        <svg width="{width}" height="{height}">
+            {''.join(svg)}
+        </svg>
+        """
+    
+        display(HTML(html))
 
 #def main():
     #drevo = GresniKozel()
