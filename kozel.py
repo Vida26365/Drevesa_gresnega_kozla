@@ -26,6 +26,30 @@ class GresniKozel:
             else: cur = cur.left 
         return cur.val if cur != None else cur 
     
+    def prev(self, val):
+        """Return the predecessor (largest element smaller than val)"""
+        predecessor = None
+        cur = self.root
+        while cur != None:
+            if cur.val < val:
+                predecessor = cur.val
+                cur = cur.right
+            else:
+                cur = cur.left
+        return predecessor
+    
+    def next(self, val):
+        """Return the successor (smallest element larger than val)"""
+        successor = None
+        cur = self.root
+        while cur != None:
+            if cur.val > val:
+                successor = cur.val
+                cur = cur.left
+            else:
+                cur = cur.right
+        return successor
+    
     def insert(self, val):
         if self.root == None: 
             self.root = Node(val)
