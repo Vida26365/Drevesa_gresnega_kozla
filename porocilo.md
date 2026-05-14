@@ -1,2 +1,0 @@
-#  Drevo Grešnega kozla
-
